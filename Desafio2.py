@@ -5,6 +5,9 @@ def  menu():
     [d]\tDepositar
     [s]\tSacar
     [e]\tExtrato
+    [nc]\tNova conta
+    [lc]\tlistar conta
+    [nu]\tnova usuário
     [q]\tSair
 
     => """
@@ -51,6 +54,41 @@ def mostrar_extrato(saldo, /, *, extrato ):
     print(f"\nSaldo:\t\t R$ {saldo:.2f}")
     print("==========================================")
 
+def criar_usuario(usuarios):
+    cpf = input("Informe o CP (somente número)")
+    usuarios = filtrar_usuario(cpf, usuarios)
+    if usuarios:
+        print("\n@@@ ja Existe usuário com esse CPF! @@@")
+        return
+    nome = input("Informe o seu nome")
+    data_nascimento = input("Informe a sue data de nasimento")
+    endereco = input("Informe o endereço (lograduro, rua , bairro)")
+    usuarios.append({"nome": nome, "data_nascimento": data_nascimento, "cpf": cpf, "endereco": endereco})
+    print("=== usuario criado com sucesso! ==")
+
+def filtrar_usuario(cpf, usuarios):
+    usuarios_filtrados = [usuario for usuario in usuarios if  usuario["cpf"] == cpf]
+    return usuarios_filtrados[0] if usuarios_filtrados else None
+
+def criar_conta(agencia, numero_conta, usuarios):
+    cpf = input("informe o CPF do usuario")
+    usuario = filtrar_usuario(cpf, usuarios)
+
+    if usuario:
+        print("\n=== conta cirado com sucesso! ===")
+        return {"agencia": agencia, "numero_conta": numero_conta, "usuario": usuario}
+    print("\n@@@ usuario não encontrado, flixo de criação de conta encerredo! @@@")
+
+def listar_contas(contas):
+
+    for contas in contas:
+        linha = f"""\
+        Agêcia:\t{contas["agencia"]}
+        c/c:\t\t{contas["numero_conta"]}
+        Titular:\t{contas["usuario"]["nome"]}
+        """
+        print("="*100)
+        print(textwrap.dedent(linha))
 
 
 def main():
@@ -61,8 +99,9 @@ def main():
     limite = 500
     extrato = ""
     numero_saques = 0
-    usuario = []
-    conta = []
+    usuarios = []
+    contas = []
+  
 
     while True:
 
@@ -87,6 +126,18 @@ def main():
 
         elif opcao == "e":
             mostrar_extrato(saldo, extrato=extrato)
+        
+        elif opcao == "nu":
+            criar_usuario = len(usuarios)
+
+        elif opcao == "nc":
+            numero_conta = len(conta) + 1
+            conta = criar_conta(AGENCIA, numero_conta, usuarios)
+            if conta:
+                conta.append(conta)
+
+        elif opcao == "lc":
+            listar_contas(contas)
 
         elif opcao == "q":
             break
